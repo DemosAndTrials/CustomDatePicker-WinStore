@@ -9,9 +9,9 @@
                 <ControlTemplate TargetType="local:DatePicker">
                     <Grid Background="{TemplateBinding Background}">
                         <Grid.ColumnDefinitions>
-                            <ColumnDefinition />
-                            <ColumnDefinition />
-                            <ColumnDefinition Width="0.7*" />
+                            <ColumnDefinition Width="0.3*"/>
+                            <ColumnDefinition Width="0.4*"/>
+                            <ColumnDefinition Width="0.3*"/>
                         </Grid.ColumnDefinitions>
                         <ComboBox x:Name="_DayOptions"
                                   Margin="0,0,5,0" />

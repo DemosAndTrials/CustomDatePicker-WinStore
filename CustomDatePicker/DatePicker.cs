@@ -15,7 +15,8 @@ namespace CustomDatePicker
     [TemplatePart(Name = "_YearOptions", Type = typeof(ComboBox))]
     public sealed class DatePicker : Control
     {
-        public static readonly DependencyProperty SelectedDateProperty = DependencyProperty.Register("SelectedDate", typeof(DateTime?), typeof(DatePicker), new PropertyMetadata(default(DateTime?), SelectedDateChangedCallback));
+        public static readonly DependencyProperty SelectedDateProperty = DependencyProperty.Register("SelectedDate", typeof(DateTime), typeof(DatePicker), new PropertyMetadata(default(DateTime), SelectedDateChangedCallback));
+        public static readonly DependencyProperty MinYearProperty = DependencyProperty.Register("MinYear", typeof(int), typeof(DatePicker), new PropertyMetadata(default(int)));
         public static readonly DependencyProperty DayOptionFormatProperty = DependencyProperty.Register("DayOptionFormat", typeof(string), typeof(DatePicker), new PropertyMetadata(default(string)));
         public static readonly DependencyProperty MonthOptionFormatProperty = DependencyProperty.Register("MonthOptionFormat", typeof(string), typeof(DatePicker), new PropertyMetadata(default(string)));
 
@@ -30,7 +31,7 @@ namespace CustomDatePicker
             DefaultStyleKey = typeof(DatePicker);
 
             //SelectedDate = DateTime.Today;
-            DayOptionFormat = "dd dddd";
+            DayOptionFormat = "dd";// "dd dddd"
             MonthOptionFormat = "MMMM";
         }
 
@@ -46,6 +47,17 @@ namespace CustomDatePicker
                 monthsInRange.Add(monthStart.ToString(MonthOptionFormat));
             }
 
+            yearsInRange.Clear();
+
+            int minYear = MinYear == 0 ? DateTime.Now.Year - 10 : MinYear;
+            int maxYear = minYear + 10;
+
+            yearsInRange.Add("Year");
+            for (int i = minYear; i <= maxYear; i++)
+            {
+                yearsInRange.Add(i.ToString());
+            }
+
             CreateBindings();
             SetSelectedDate(SelectedDate);
 
@@ -54,41 +66,29 @@ namespace CustomDatePicker
             YearOptions.SelectionChanged += YearOptionsOnSelectionChanged;
         }
 
-        private void SetSelectedDate(DateTime? newSelectedDate)
+        private void SetSelectedDate(DateTime newSelectedDate)
         {
             if (DayOptions != null && MonthOptions != null && YearOptions != null)
             {
-                var TempNewSelectedDate = newSelectedDate;
-                if (newSelectedDate == null)
-                {
-                    newSelectedDate = DateTime.Today;
-                }
+
                 daysInRange.Clear();
-                yearsInRange.Clear();
 
                 daysInRange.Add("Date");
-                for (int i = 1; i <= DateTime.DaysInMonth(newSelectedDate.Value.Year, newSelectedDate.Value.Month); i++)
+                for (int i = 1; i <= DateTime.DaysInMonth(newSelectedDate.Year, newSelectedDate.Month); i++)
                 {
-                    DateTime date = new DateTime(newSelectedDate.Value.Year, newSelectedDate.Value.Month, i);
+                    DateTime date = new DateTime(newSelectedDate.Year, newSelectedDate.Month, i);
                     daysInRange.Add(date.ToString(DayOptionFormat));
                 }
 
-                int minYear = newSelectedDate.Value.Year - 10;
-                int maxYear = newSelectedDate.Value.Year + 10;
 
-                yearsInRange.Add("Year");
-                for (int i = minYear; i <= maxYear; i++)
+
+
+                if (newSelectedDate != DateTime.MinValue)
                 {
-                    yearsInRange.Add(i.ToString());
+                    DayOptions.SelectedIndex = newSelectedDate.Day;
+                    MonthOptions.SelectedIndex = newSelectedDate.Month;
+                    YearOptions.SelectedItem = newSelectedDate.Year.ToString();
                 }
-
-                if (TempNewSelectedDate != null)
-                {
-                    DayOptions.SelectedIndex = newSelectedDate.Value.Day;
-                    MonthOptions.SelectedIndex = newSelectedDate.Value.Month;
-                    YearOptions.SelectedItem = newSelectedDate.Value.Year.ToString();
-                }
-
                 else
                 {
                     DayOptions.SelectedIndex = 0;
@@ -133,31 +133,28 @@ namespace CustomDatePicker
 
                 SelectedDate = new DateTime(year, month, day);
             }
-            else if (YearOptions.SelectedIndex == 0 && MonthOptions.SelectedIndex == 0 && DayOptions.SelectedIndex == 0)
+            else if (YearOptions.SelectedIndex == 0 || MonthOptions.SelectedIndex == 0 || DayOptions.SelectedIndex == 0)
             {
-                SelectedDate = null;
+                SelectedDate = DateTime.MinValue;
             }
         }
 
         private void UpdateDayOptions()
         {
-            if (SelectedDate != null)
+            int selectedDayIndex = DayOptions.SelectedIndex;
+            int month = MonthOptions.SelectedIndex;
+
+            if (month != 0)
             {
-                int selectedDayIndex = DayOptions.SelectedIndex;
-                int month = MonthOptions.SelectedIndex;
-
-                if (month != 0)
+                daysInRange.Clear();
+                daysInRange.Add("Date");
+                for (int i = 1; i <= DateTime.DaysInMonth(SelectedDate.Year, month); i++)
                 {
-                    daysInRange.Clear();
-                    daysInRange.Add("Date");
-                    for (int i = 1; i <= DateTime.DaysInMonth(SelectedDate.Value.Year, month); i++)
-                    {
-                        DateTime date = new DateTime(SelectedDate.Value.Year, month, i);
-                        daysInRange.Add(date.ToString(DayOptionFormat));
-                    }
-
-                    DayOptions.SelectedIndex = selectedDayIndex;
+                    DateTime date = new DateTime(SelectedDate.Year, month, i);
+                    daysInRange.Add(date.ToString(DayOptionFormat));
                 }
+
+                DayOptions.SelectedIndex = selectedDayIndex;
             }
         }
 
@@ -180,8 +177,8 @@ namespace CustomDatePicker
 
         private static void SelectedDateChangedCallback(DependencyObject obj, DependencyPropertyChangedEventArgs args)
         {
-            DateTime oldValue = args.OldValue != null ? (DateTime)args.OldValue : DateTime.Today.AddDays(-1);
-            DateTime? newValue = (DateTime?)args.NewValue;
+            DateTime oldValue = (DateTime)args.OldValue;
+            DateTime newValue = (DateTime)args.NewValue;
 
             if (newValue != oldValue)
             {
@@ -193,10 +190,16 @@ namespace CustomDatePicker
             }
         }
 
-        public DateTime? SelectedDate
+        public DateTime SelectedDate
         {
-            get { return (DateTime?)GetValue(SelectedDateProperty); }
+            get { return (DateTime)GetValue(SelectedDateProperty); }
             set { SetValue(SelectedDateProperty, value); }
+        }
+
+        public int MinYear
+        {
+            get { return (int)GetValue(MinYearProperty); }
+            set { SetValue(MinYearProperty, value); }
         }
 
         public string DayOptionFormat

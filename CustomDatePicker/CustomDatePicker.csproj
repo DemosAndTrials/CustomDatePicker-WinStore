@@ -109,7 +109,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="DatePicker.cs" />
-    <Compile Include="NullableValueConverter.cs" />
     <Compile Include="SelectedDateChangedEventArgs.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
