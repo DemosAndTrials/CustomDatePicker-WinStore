@@ -1,9 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Data;
@@ -17,8 +13,12 @@ namespace CustomDatePicker
     {
         public static readonly DependencyProperty SelectedDateProperty = DependencyProperty.Register("SelectedDate", typeof(DateTime), typeof(DatePicker), new PropertyMetadata(default(DateTime), SelectedDateChangedCallback));
         public static readonly DependencyProperty MinYearProperty = DependencyProperty.Register("MinYear", typeof(int), typeof(DatePicker), new PropertyMetadata(default(int)));
+        public static readonly DependencyProperty MaxYearProperty = DependencyProperty.Register("MaxYear", typeof(int), typeof(DatePicker), new PropertyMetadata(default(int)));
         public static readonly DependencyProperty DayOptionFormatProperty = DependencyProperty.Register("DayOptionFormat", typeof(string), typeof(DatePicker), new PropertyMetadata(default(string)));
         public static readonly DependencyProperty MonthOptionFormatProperty = DependencyProperty.Register("MonthOptionFormat", typeof(string), typeof(DatePicker), new PropertyMetadata(default(string)));
+        public static readonly DependencyProperty PlaceholderDayProperty = DependencyProperty.Register("PlaceholderDay", typeof(string), typeof(DatePicker), new PropertyMetadata(default(string)));
+        public static readonly DependencyProperty PlaceholderMonthProperty = DependencyProperty.Register("PlaceholderMonth", typeof(string), typeof(DatePicker), new PropertyMetadata(default(string)));
+        public static readonly DependencyProperty PlaceholderYearProperty = DependencyProperty.Register("PlaceholderYear", typeof(string), typeof(DatePicker), new PropertyMetadata(default(string)));
 
         public event EventHandler<SelectedDateChangedEventArgs> SelectedDateChanged;
 
@@ -31,8 +31,13 @@ namespace CustomDatePicker
             DefaultStyleKey = typeof(DatePicker);
 
             //SelectedDate = DateTime.Today;
+            MinYear = DateTime.Now.Year - 10;
+            MaxYear = DateTime.Now.Year + 10;
             DayOptionFormat = "dd";// "dd dddd"
             MonthOptionFormat = "MMMM";
+            PlaceholderDay = "";
+            PlaceholderMonth = "";
+            PlaceholderYear = "";
         }
 
         protected override void OnApplyTemplate()
@@ -40,7 +45,7 @@ namespace CustomDatePicker
             base.OnApplyTemplate();
 
             monthsInRange.Clear();
-            monthsInRange.Add("Month");
+            monthsInRange.Add(PlaceholderMonth);
             for (int i = 1; i <= 12; i++)
             {
                 DateTime monthStart = new DateTime(DateTime.Now.Year, i, 1);
@@ -49,10 +54,10 @@ namespace CustomDatePicker
 
             yearsInRange.Clear();
 
-            int minYear = MinYear == 0 ? DateTime.Now.Year - 10 : MinYear;
-            int maxYear = minYear + 10;
+            int minYear = MinYear;
+            int maxYear = MaxYear;
 
-            yearsInRange.Add("Year");
+            yearsInRange.Add(PlaceholderYear);
             for (int i = minYear; i <= maxYear; i++)
             {
                 yearsInRange.Add(i.ToString());
@@ -73,15 +78,12 @@ namespace CustomDatePicker
 
                 daysInRange.Clear();
 
-                daysInRange.Add("Date");
+                daysInRange.Add(PlaceholderDay);
                 for (int i = 1; i <= DateTime.DaysInMonth(newSelectedDate.Year, newSelectedDate.Month); i++)
                 {
                     DateTime date = new DateTime(newSelectedDate.Year, newSelectedDate.Month, i);
                     daysInRange.Add(date.ToString(DayOptionFormat));
                 }
-
-
-
 
                 if (newSelectedDate != DateTime.MinValue)
                 {
@@ -147,7 +149,7 @@ namespace CustomDatePicker
             if (month != 0)
             {
                 daysInRange.Clear();
-                daysInRange.Add("Date");
+                daysInRange.Add(PlaceholderDay);
                 for (int i = 1; i <= DateTime.DaysInMonth(SelectedDate.Year, month); i++)
                 {
                     DateTime date = new DateTime(SelectedDate.Year, month, i);
@@ -202,6 +204,12 @@ namespace CustomDatePicker
             set { SetValue(MinYearProperty, value); }
         }
 
+        public int MaxYear
+        {
+            get { return (int)GetValue(MaxYearProperty); }
+            set { SetValue(MaxYearProperty, value); }
+        }
+
         public string DayOptionFormat
         {
             get { return (string)GetValue(DayOptionFormatProperty); }
@@ -212,6 +220,24 @@ namespace CustomDatePicker
         {
             get { return (string)GetValue(MonthOptionFormatProperty); }
             set { SetValue(MonthOptionFormatProperty, value); }
+        }
+
+        public string PlaceholderDay
+        {
+            get { return (string)GetValue(PlaceholderDayProperty); }
+            set { SetValue(PlaceholderDayProperty, value); }
+        }
+
+        public string PlaceholderMonth
+        {
+            get { return (string)GetValue(PlaceholderMonthProperty); }
+            set { SetValue(PlaceholderMonthProperty, value); }
+        }
+
+        public string PlaceholderYear
+        {
+            get { return (string)GetValue(PlaceholderYearProperty); }
+            set { SetValue(PlaceholderYearProperty, value); }
         }
 
         private ComboBox DayOptions
