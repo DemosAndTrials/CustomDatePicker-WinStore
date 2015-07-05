@@ -30,6 +30,7 @@ namespace CustomDatePicker
         {
             DefaultStyleKey = typeof(DatePicker);
 
+            // set default values
             //SelectedDate = DateTime.Today;
             MinYear = DateTime.Now.Year - 10;
             MaxYear = DateTime.Now.Year + 10;
