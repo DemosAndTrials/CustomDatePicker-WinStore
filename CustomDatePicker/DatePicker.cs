@@ -73,6 +73,9 @@ namespace CustomDatePicker
             CreateBindings();
             SetSelectedDate(SelectedDate);
 
+            MonthOptions.SelectedIndex = DateTime.Today.Month;
+            YearOptions.SelectedIndex = yearsInRange.IndexOf(DateTime.Today.Year.ToString());
+
             DayOptions.SelectionChanged += DayOptionsOnSelectionChanged;
             MonthOptions.SelectionChanged += MonthOptionsOnSelectionChanged;
             YearOptions.SelectionChanged += YearOptionsOnSelectionChanged;
