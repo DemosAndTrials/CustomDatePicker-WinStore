@@ -1,6 +1,5 @@
 ﻿<Page
     x:Class="CustomDatePicker.Sample.MainPage"
-    DataContext="{Binding DefaultViewModel, RelativeSource={RelativeSource Self}}"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="using:CustomDatePicker.Sample"
@@ -13,6 +12,7 @@
         <Grid.RowDefinitions>
             <RowDefinition Height="*" />
             <RowDefinition Height="*" />
+            <RowDefinition Height="auto" />
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*" />
@@ -21,7 +21,7 @@
 
         <StackPanel Grid.Column="0" HorizontalAlignment="Center" VerticalAlignment="Center">
             <TextBlock TextWrapping="Wrap" Text="Default" Margin="10" Style="{StaticResource SubtitleTextBlockStyle}"/>
-            <dp:DatePicker x:Name="datePicker1" SelectedDate="{Binding dt1}"/>
+            <!--<dp:DatePicker x:Name="datePicker1" SelectedDate="{Binding dt1}"/>-->
             <StackPanel Orientation="Horizontal" Margin="0,10,0,0">
                 <TextBlock TextWrapping="Wrap" Text="Selected Date: " Style="{StaticResource SubtitleTextBlockStyle}"/>
                 <TextBlock TextWrapping="Wrap" Margin="10,0,0,0"
@@ -34,13 +34,17 @@
         
         <StackPanel Grid.Column="1" HorizontalAlignment="Center" VerticalAlignment="Center">
             <TextBlock TextWrapping="Wrap" Text="Placeholders and Format" Margin="10" Style="{StaticResource SubtitleTextBlockStyle}"/>
-            <dp:DatePicker x:Name="datePicker2" SelectedDate="{Binding dt1}" Grid.Column="1" 
+            <dp:DatePicker x:Name="datePicker2" SelectedDate="{Binding Date1}" Grid.Column="1" 
                        DayOptionFormat="dd dddd" MonthOptionFormat="MM" PlaceholderDay="Date" PlaceholderMonth="Month" PlaceholderYear="Year"
                        HorizontalAlignment="Center" VerticalAlignment="Center"/>
         </StackPanel>
 
-        <StackPanel Grid.Column="0" Grid.Row="1" HorizontalAlignment="Center" VerticalAlignment="Center">
-        <dp:DatePicker x:Name="datePicker3" SelectedDate="{Binding dt2}" Grid.Column="0" Grid.Row="1" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+        <!--<StackPanel Grid.Column="0" Grid.Row="1" HorizontalAlignment="Center" VerticalAlignment="Center">
+        <dp:DatePicker x:Name="datePicker3" SelectedDate="{Binding Date2,Mode=TwoWay}" Grid.Column="0" Grid.Row="1" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+        </StackPanel>-->
+
+        <StackPanel Grid.Row="2" Grid.ColumnSpan="2">
+            <Button Content="Navigate" Click="Button_Click"/>
         </StackPanel>
 
     </Grid>

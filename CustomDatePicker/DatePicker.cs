@@ -92,11 +92,11 @@ namespace CustomDatePicker
                     MonthOptions.SelectedIndex = newSelectedDate.Month;
                     YearOptions.SelectedItem = newSelectedDate.Year.ToString();
                 }
-                else
+                else // min date , leave day unselected  //TODO create property for that option
                 {
                     DayOptions.SelectedIndex = 0;
-                    MonthOptions.SelectedIndex = 0;
-                    YearOptions.SelectedIndex = 0;
+                    MonthOptions.SelectedIndex = DateTime.Now.Month;
+                    YearOptions.SelectedItem = DateTime.Now.Year.ToString();
                 }
             }
         }
