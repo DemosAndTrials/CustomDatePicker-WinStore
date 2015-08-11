@@ -6,11 +6,15 @@ using Windows.UI.Xaml.Data;
 
 namespace CustomDatePicker
 {
+    /// <summary>
+    /// Custom Windows Store DatePicker
+    /// </summary>
     [TemplatePart(Name = "_DayOptions", Type = typeof(ComboBox))]
     [TemplatePart(Name = "_MonthOptions", Type = typeof(ComboBox))]
     [TemplatePart(Name = "_YearOptions", Type = typeof(ComboBox))]
     public sealed class DatePicker : Control
     {
+        // properties
         public static readonly DependencyProperty SelectedDateProperty = DependencyProperty.Register("SelectedDate", typeof(DateTime), typeof(DatePicker), new PropertyMetadata(default(DateTime), SelectedDateChangedCallback));
         public static readonly DependencyProperty MinYearProperty = DependencyProperty.Register("MinYear", typeof(int), typeof(DatePicker), new PropertyMetadata(default(int)));
         public static readonly DependencyProperty MaxYearProperty = DependencyProperty.Register("MaxYear", typeof(int), typeof(DatePicker), new PropertyMetadata(default(int)));
@@ -19,9 +23,9 @@ namespace CustomDatePicker
         public static readonly DependencyProperty PlaceholderDayProperty = DependencyProperty.Register("PlaceholderDay", typeof(string), typeof(DatePicker), new PropertyMetadata(default(string)));
         public static readonly DependencyProperty PlaceholderMonthProperty = DependencyProperty.Register("PlaceholderMonth", typeof(string), typeof(DatePicker), new PropertyMetadata(default(string)));
         public static readonly DependencyProperty PlaceholderYearProperty = DependencyProperty.Register("PlaceholderYear", typeof(string), typeof(DatePicker), new PropertyMetadata(default(string)));
-
+        // events
         public event EventHandler<SelectedDateChangedEventArgs> SelectedDateChanged;
-
+        // fields
         private readonly ObservableCollection<string> daysInRange = new ObservableCollection<string>();
         private readonly ObservableCollection<string> monthsInRange = new ObservableCollection<string>();
         private readonly ObservableCollection<string> yearsInRange = new ObservableCollection<string>();
@@ -34,8 +38,10 @@ namespace CustomDatePicker
             //SelectedDate = DateTime.Today;
             MinYear = DateTime.Now.Year - 10;
             MaxYear = DateTime.Now.Year + 10;
-            DayOptionFormat = "dd";// "dd dddd"
+            // "dd dddd"
+            DayOptionFormat = "dd";
             MonthOptionFormat = "MMMM";
+
             PlaceholderDay = "";
             PlaceholderMonth = "";
             PlaceholderYear = "";
@@ -72,6 +78,10 @@ namespace CustomDatePicker
             YearOptions.SelectionChanged += YearOptionsOnSelectionChanged;
         }
 
+        /// <summary>
+        /// Set new selected date
+        /// </summary>
+        /// <param name="newSelectedDate">date</param>
         private void SetSelectedDate(DateTime newSelectedDate)
         {
             if (DayOptions != null && MonthOptions != null && YearOptions != null)
@@ -101,6 +111,9 @@ namespace CustomDatePicker
             }
         }
 
+        /// <summary>
+        /// Create bindings for comboboxes
+        /// </summary>
         private void CreateBindings()
         {
             Binding dayOptionsBinding = new Binding { Source = daysInRange, Mode = BindingMode.OneWay };
@@ -113,6 +126,9 @@ namespace CustomDatePicker
             YearOptions.SetBinding(ItemsControl.ItemsSourceProperty, yearOptionsBinding);
         }
 
+        /// <summary>
+        /// Update selected date
+        /// </summary>
         private void UpdateSelectedDateFromInputs()
         {
             if (YearOptions.SelectedIndex > 0 && MonthOptions.SelectedIndex > 0 && DayOptions.SelectedIndex > 0)
@@ -136,6 +152,7 @@ namespace CustomDatePicker
 
                 SelectedDate = new DateTime(year, month, day);
             }
+            //some input not selected so reset selected date
             else if (YearOptions.SelectedIndex == 0 || MonthOptions.SelectedIndex == 0 || DayOptions.SelectedIndex == 0)
             {
                 SelectedDate = DateTime.MinValue;
